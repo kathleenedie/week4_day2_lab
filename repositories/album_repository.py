@@ -48,7 +48,9 @@ def select_all():
 # Extensions
 
 def delete(id):
-    pass
+    sql = "DELETE  FROM albums WHERE id = %s"
+    values = [id]
+    run_sql(sql, values)
 
 
 def update(album):

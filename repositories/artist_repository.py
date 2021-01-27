@@ -2,6 +2,7 @@ from db.run_sql import run_sql
 
 from models.artist import Artist
 from models.album import Album
+import repositories.album_repository as album_repository
 
 
 def save(artist):
@@ -44,13 +45,47 @@ def select_all():
 # Extensions
 
 
-def albums(artist):
-    pass
+# def albums(artist):
+#     albums = []
 
+#     sql = "SELECT * FROM albums WHERE artist_id = %s"
+#     values = [id] #select(id)
+#     results = run_sql(sql, values)
+
+#     if results is not None:
+    
+#         for row in results:
+#             album = Album(row['id'], row['title'], row['artist_id'], row['genre'])
+#             albums.append(album)
+#         return albums
+
+# error can't adapt type 'builtin_function_or_method'
+
+def albums(artist):
+    albums = []
+
+    sql = "SELECT * FROM albums WHERE artist_id = (SELECT id FROM artists WHERE name = %s)"
+    values = [artist.name]
+    results = run_sql(sql, values)
+
+    if results is not None:
+    
+        for row in results:
+            album = Album(row['id'], row['title'], row['artist_id'], row['genre'])
+            albums.append(album)
+        return albums
+
+# *** AttributeError: 'str' object has no attribute 'name'
 
 def delete(id):
-    pass
+    sql = "DELETE  FROM artists WHERE id = %s"
+    values = [id]
+    run_sql(sql, values)
 
 
 def update(artist):
-    pass
+    sql = "UPDATE artists SET (name, id) = (%s, %s) WHERE id = %s"
+    values = [artist.name, artist.id]
+    run_sql(sql, values)
+
+# *** AttributeError: 'int' object has no attribute 'name'
